@@ -4,9 +4,11 @@ import {
     forwardRef,
     useEffect,
     useImperativeHandle,
+    useMemo,
     useRef,
     useState
 } from "react";
+import { debounce } from "../../api/utils";
 import Loading from "../loading";
 import LoadingV2 from "../loading-v2";
 import { PullDownLoading, PullUpLoading, ScrollContainer } from "./style";
@@ -24,6 +26,14 @@ const Scroll = forwardRef((props, ref) => {
     bounceBottom,
   } = props;
   const { pullUp, pullDown, onScroll } = props;
+
+  const pullUpDebounce = useMemo(() => {
+    return debounce(pullUp, 0.3);
+  }, [pullUp]);
+
+  const pullDownDebounce = useMemo(() => {
+    return debounce(pullDown, 0.3);
+  }, [pullDown]);
 
   // initial
   useEffect(() => {
@@ -55,20 +65,22 @@ const Scroll = forwardRef((props, ref) => {
   // handle scroll to bottom
   useEffect(() => {
     if (!bScroll || !pullUp) return;
-    bScroll.on("scrollEnd", () => {
-      if (bScroll.y <= bScroll.maxScrollY + 100) pullUp();
-    });
-    return () => bScroll.off("scrollEnd");
-  }, [pullUp, bScroll]);
+    const handlePullUp = () => {
+      if (bScroll.y <= bScroll.maxScrollY + 100) pullUpDebounce();
+    };
+    bScroll.on("scrollEnd", handlePullUp);
+    return () => bScroll.off("scrollEnd", handlePullUp);
+  }, [pullUp, bScroll, pullUpDebounce]);
 
   // handle pull down
   useEffect(() => {
     if (!bScroll || !pullDown) return;
-    bScroll.on("touchEnd", (pos) => {
-      if (pos.y > 50) pullDown();
-    });
-    return () => bScroll.off("touchEnd");
-  }, [pullDown, bScroll]);
+    const handlePullDown = (pos) => {
+      if (pos.y > 50) pullDownDebounce();
+    };
+    bScroll.on("touchEnd", handlePullDown);
+    return () => bScroll.off("touchEnd", handlePullDown);
+  }, [pullDown, bScroll, pullDownDebounce]);
 
   // expose methods
   useImperativeHandle(ref, () => ({
