@@ -12,14 +12,19 @@ import {
     changePageCount,
     changePullDownLoading,
     changePullUpLoading,
-
     getHotSingerList,
     getSingerList,
     refreshMoreHotSingerList,
     refreshMoreSingerList
 } from "./store/actionCreators";
 import { selectSingerProps } from "./store/selectors";
-import { List, ListContainer, ListItem, NavContainer } from "./style";
+import {
+    EnterLoading,
+    List,
+    ListContainer,
+    ListItem,
+    NavContainer
+} from "./style";
 import { isHot } from "./utils";
 
 function Singer(props) {
@@ -148,7 +153,9 @@ function Singer(props) {
         >
           {renderSingerList()}
         </Scroll>
-        <Loading show={enterLoading} />
+        <EnterLoading>
+          <Loading show={enterLoading} />
+        </EnterLoading>
       </ListContainer>
     </div>
   );
