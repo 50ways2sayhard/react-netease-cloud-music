@@ -12,8 +12,7 @@ const loading = keyframes`
 
 export const LoadingWrapper = styled.div`
   > div {
-    position: fixed;
-    z-index: 1000;
+    position: absolute;
     left: 0;
     right: 0;
     top: 0;
@@ -23,7 +22,7 @@ export const LoadingWrapper = styled.div`
     height: 60px;
     opacity: 0.6;
     border-radius: 50%;
-    backgroud-color: ${style["theme-color"]};
+    background-color: ${style["theme-color"]};
     animation: ${loading} 1.4s infinite ease-in;
   }
   > div:nth-child(2) {
