@@ -51,7 +51,9 @@ export function refreshMoreHotSingerList() {
 /**
  * 第一次加载对应类型歌手
  * @param {string} category 歌手类型
+ * @param {string} area 歌手所在地区
  * @param {string} alpha 首字母类型
+ * @returns {Function} thunk 后续处理的闭包
  */
 export function getSingerList(category, area, alpha) {
   return (dispatch) => {
