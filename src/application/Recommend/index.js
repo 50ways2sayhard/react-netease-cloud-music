@@ -32,7 +32,7 @@ function Recommend(props) {
           <RecommendList recommendList={recommendList} />
         </div>
       </Scroll>
-      {loading ? <Loading /> : null}
+      <Loading show={loading} />
     </Content>
   );
 }

@@ -54,7 +54,7 @@ export function refreshMoreHotSingerList() {
  * @param {string} alpha 首字母类型
  */
 export function getSingerList(category, area, alpha) {
-  return (dispatch, getState) => {
+  return (dispatch) => {
     getSingerListRequest(category, area, alpha, 0)
       .then((res) => {
         const data = res.artists;
@@ -73,11 +73,11 @@ export function getSingerList(category, area, alpha) {
  * @param {} category
  * @param {} alpha
  */
-export function refreshMoreSingerList(category, alpha) {
+export function refreshMoreSingerList(category, area, alpha) {
   return (dispatch, getState) => {
     const pageCount = selectPageCount(getState());
     const singerList = selectSingerList(getState());
-    getSingerListRequest(category, alpha, pageCount)
+    getSingerListRequest(category, area, alpha, pageCount)
       .then((res) => {
         const data = [...singerList, ...res.artists];
         dispatch(changeSingerList(data));

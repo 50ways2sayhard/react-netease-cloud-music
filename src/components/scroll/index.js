@@ -7,7 +7,9 @@ import {
     useRef,
     useState
 } from "react";
-import { ScrollContainer } from "./style";
+import Loading from "../loading";
+import LoadingV2 from "../loading-v2";
+import { PullDownLoading, PullUpLoading, ScrollContainer } from "./style";
 
 const Scroll = forwardRef((props, ref) => {
   const [bScroll, setBScroll] = useState();
@@ -81,8 +83,23 @@ const Scroll = forwardRef((props, ref) => {
     },
   }));
 
+  const PullUpdisplayStyle = pullUpLoading
+    ? { display: "" }
+    : { display: "none" };
+  const PullDowndisplayStyle = pullDownLoading
+    ? { display: "" }
+    : { display: "none" };
+
   return (
-    <ScrollContainer ref={scrollContainerRef}>{props.children}</ScrollContainer>
+    <ScrollContainer ref={scrollContainerRef}>
+      {props.children}
+      <PullUpLoading style={PullUpdisplayStyle}>
+        <Loading show={pullUpLoading} />
+      </PullUpLoading>
+      <PullDownLoading style={PullDowndisplayStyle}>
+        <LoadingV2 />
+      </PullDownLoading>
+    </ScrollContainer>
   );
 });
 

@@ -1,6 +1,7 @@
 import React from "react";
 import LazyLoad from "react-lazyload";
 import { getCount } from "../../api/utils";
+import collection from "../../assets/collection.png";
 import { List, ListItem, ListWrapper } from "./style";
 
 function RecommendList(props) {
@@ -18,7 +19,7 @@ function RecommendList(props) {
                   <img
                     width="100%"
                     height="100%"
-                    src={require("./music.png")}
+                    src={collection}
                     alt="music"
                   />
                 }
