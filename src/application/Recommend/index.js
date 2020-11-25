@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { forceCheck } from "react-lazyload";
 import { useDispatch, useSelector } from "react-redux";
+import { renderRoutes } from "react-router-config";
 import RecommendList from "../../components/list";
 import Loading from "../../components/loading";
 import Scroll from "../../components/scroll";
@@ -33,6 +34,7 @@ function Recommend(props) {
         </div>
       </Scroll>
       <Loading show={loading} />
+      {renderRoutes(props.route.routes)}
     </Content>
   );
 }
