@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect } from "react";
 import LazyLoad, { forceCheck } from "react-lazyload";
 import { useDispatch, useSelector } from "react-redux";
 import { alphaTypes, areaTypes, singerTypes } from "../../api/config";
@@ -6,11 +6,13 @@ import singer from "../../assets/singer.png";
 import Horizen from "../../components/horizen-item";
 import Loading from "../../components/loading";
 import Scroll from "../../components/scroll";
+import useLocalStorage from "../../hooks/useLocalStorage";
 import { changeEnterLoading } from "../Recommend/store/actionCreators";
 import {
     changePageCount,
     changePullDownLoading,
     changePullUpLoading,
+
     getHotSingerList,
     getSingerList,
     refreshMoreHotSingerList,
@@ -21,9 +23,12 @@ import { List, ListContainer, ListItem, NavContainer } from "./style";
 import { isHot } from "./utils";
 
 function Singer(props) {
-  const [category, setCategory] = useState("");
-  const [area, setArea] = useState("");
-  const [alpha, setAlpha] = useState("");
+  const [category, setCategory, removeCategory] = useLocalStorage(
+    "category",
+    ""
+  );
+  const [area, setArea, removeArea] = useLocalStorage("area", "");
+  const [alpha, setAlpha, removeAlpha] = useLocalStorage("alpha", "");
   const {
     singerList,
     pageCount,
@@ -34,7 +39,10 @@ function Singer(props) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getHotSingerList());
+    if (!singerList.length) {
+      if (isHot()) dispatch(getHotSingerList());
+      else dispatch(getSingerList(category, area, alpha));
+    }
   }, []);
 
   const updateSingers = useCallback(
