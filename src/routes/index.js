@@ -22,7 +22,11 @@ export default [
         routes: [{ path: "/recommend/:id", component: Album }],
       },
       { path: "/singers", component: Singers },
-      { path: "/rank", component: Rank },
+      {
+        path: "/rank",
+        component: Rank,
+        routes: [{ path: "/rank/:id", component: Album }],
+      },
     ],
   },
 ];

@@ -1,25 +1,22 @@
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useCallback } from "react";
+import { useHistory } from "react-router";
 import SongList from "./SongList";
 import { ListItem } from "./style";
-import { filterRankTypeIdx } from "./utils";
 
 function RankListItem(props) {
   const { item } = props;
+  const history = useHistory();
 
-  const enterDetail = (name) => {
-    const idx = filterRankTypeIdx(name);
-    if (idx === null) {
-      alert("暂无相关数据");
-      return;
-    }
-  };
+  const enterDetail = useCallback((detail) => {
+    history.push(`/rank/${detail.id}`);
+  }, []);
 
   return (
     <ListItem
       key={item.coverImgId}
       tracks={item.tracks}
-      onClick={() => enterDetail(item.name)}
+      onClick={() => enterDetail(item)}
     >
       <div className="img_wrapper">
         <img src={item.coverImgUrl} alt="" />
