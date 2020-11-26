@@ -1,16 +1,60 @@
-import React, { useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { CSSTransition } from "react-transition-group";
+import { isEmptyObject } from "../../api/utils";
+import style from "../../assets/global-style";
 import Header from "../../components/header";
+import Loading from "../../components/loading";
+import Scroll from "../../components/scroll";
+import Cover from "./Cover";
+import { changeEnterLoading, getAlbumList } from "./store/actionCreators";
+import { selectAlbumState } from "./store/selectors";
 import { Container } from "./style";
+import TracksList from "./TracksList";
+
+const HEADER_HEIGHT = 45;
 
 function Album(props) {
+  const [title, setTitle] = useState("歌单");
+  const [isMarquee, setIsMarquee] = useState(false); //是否跑马灯
   const [showStatus, setShowStatus] = useState(true);
   const container = useRef();
-  const headerEL = useRef();
+  const headerEl = useRef();
+  const albumId = props.match.params.id;
 
-  const handleBack = () => {
+  // redux
+  const { currentAlbum, enterLoading } = useSelector(selectAlbumState);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(changeEnterLoading(true));
+    dispatch(getAlbumList(albumId));
+  }, []);
+
+  const handleBack = useCallback(() => {
     setShowStatus(false);
-  };
+  }, []);
+
+  const handleScroll = useCallback(
+    (pos) => {
+      let minScrollY = -HEADER_HEIGHT;
+      let percent = Math.abs(pos.y / minScrollY);
+      let headerDom = headerEl.current;
+      // 滑过顶部的高度开始变化
+      if (pos.y < minScrollY) {
+        headerDom.style.backgroundColor = style["theme-color"];
+        headerDom.style.opacity = Math.min(1, (percent - 1) / 2);
+        setTitle(currentAlbum.name);
+        setIsMarquee(true);
+      } else {
+        headerDom.style.backgroundColor = "";
+        headerDom.style.opacity = 1;
+        setTitle("歌单");
+        setIsMarquee(false);
+      }
+    },
+    [currentAlbum]
+  );
 
   return (
     <CSSTransition
@@ -23,7 +67,26 @@ function Album(props) {
       onExited={props.history.goBack}
     >
       <Container ref={container}>
-        <Header ref={headerEL} title="返回" handleClick={handleBack} />
+        <Header
+          ref={headerEl}
+          title={title}
+          handleClick={handleBack}
+          isMarquee={isMarquee}
+        />
+        <Scroll bounceTop={false} onScroll={handleScroll}>
+          <div>
+            {!isEmptyObject(currentAlbum) ? <Cover album={currentAlbum} /> : ""}
+            {!isEmptyObject(currentAlbum) ? (
+              <TracksList
+                tracks={currentAlbum.tracks}
+                subscribedCount={currentAlbum.subscribedCount}
+              />
+            ) : (
+              ""
+            )}
+          </div>
+        </Scroll>
+        <Loading show={enterLoading} />
       </Container>
     </CSSTransition>
   );

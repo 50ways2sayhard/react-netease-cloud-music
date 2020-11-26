@@ -22,3 +22,5 @@ export function debounce(fn, wait) {
     }, wait * 1000);
   };
 }
+
+export const isEmptyObject = (obj) => !obj || Object.keys(obj).length === 0;
