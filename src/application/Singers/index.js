@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect } from "react";
 import LazyLoad, { forceCheck } from "react-lazyload";
 import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router";
+import { renderRoutes } from "react-router-config";
 import { alphaTypes, areaTypes, singerTypes } from "../../api/config";
 import singer from "../../assets/singer.png";
 import Horizen from "../../components/horizen-item";
@@ -27,7 +29,7 @@ import {
 } from "./style";
 import { isHot } from "./utils";
 
-function Singer(props) {
+function Singers(props) {
   const [category, setCategory, removeCategory] = useLocalStorage(
     "category",
     ""
@@ -42,6 +44,7 @@ function Singer(props) {
     enterLoading,
   } = useSelector(selectSingerProps);
   const dispatch = useDispatch();
+  const history = useHistory();
 
   useEffect(() => {
     if (!singerList.length) {
@@ -93,12 +96,22 @@ function Singer(props) {
     else dispatch(refreshMoreSingerList(category, area, alpha));
   });
 
+  const enterDetail = useCallback(
+    (id) => {
+      history.push(`/singers/${id}`);
+    },
+    [history]
+  );
+
   const renderSingerList = () => {
     return (
       <List>
         {singerList.map((item, index) => {
           return (
-            <ListItem key={item.accountId + "" + index}>
+            <ListItem
+              key={item.accountId + "" + index}
+              onClick={() => enterDetail(item.id)}
+            >
               <div className="img_wrapper">
                 <LazyLoad
                   placeholder={
@@ -157,8 +170,9 @@ function Singer(props) {
           <Loading show={enterLoading} />
         </EnterLoading>
       </ListContainer>
+      {renderRoutes(props.route.routes)}
     </div>
   );
 }
 
-export default React.memo(Singer);
+export default React.memo(Singers);

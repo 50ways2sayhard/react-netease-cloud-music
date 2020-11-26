@@ -1,18 +1,17 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { CSSTransition } from "react-transition-group";
+import { HEADER_HEIGHT } from "../../api/config";
 import { isEmptyObject } from "../../api/utils";
 import style from "../../assets/global-style";
 import Header from "../../components/header";
 import Loading from "../../components/loading";
 import Scroll from "../../components/scroll";
+import SongsList from "../SongList";
 import Cover from "./Cover";
 import { changeEnterLoading, getAlbumList } from "./store/actionCreators";
 import { selectAlbumState } from "./store/selectors";
 import { Container } from "./style";
-import TracksList from "./TracksList";
-
-const HEADER_HEIGHT = 45;
 
 function Album(props) {
   const [title, setTitle] = useState("歌单");
@@ -77,7 +76,7 @@ function Album(props) {
           <div>
             {!isEmptyObject(currentAlbum) ? <Cover album={currentAlbum} /> : ""}
             {!isEmptyObject(currentAlbum) ? (
-              <TracksList
+              <SongsList
                 tracks={currentAlbum.tracks}
                 subscribedCount={currentAlbum.subscribedCount}
               />

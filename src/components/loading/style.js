@@ -22,6 +22,7 @@ export const LoadingWrapper = styled.div`
     height: 60px;
     opacity: 0.6;
     border-radius: 50%;
+    z-index: 1000;
     background-color: ${style["theme-color"]};
     animation: ${loading} 1.4s infinite ease-in;
   }
