@@ -9,6 +9,7 @@ import Horizen from "../../components/horizen-item";
 import Loading from "../../components/loading";
 import Scroll from "../../components/scroll";
 import useLocalStorage from "../../hooks/useLocalStorage";
+import { selectPlayingSongsCount } from "../Player/store/selectors";
 import { changeEnterLoading } from "../Recommend/store/actionCreators";
 import {
     changePageCount,
@@ -45,6 +46,7 @@ function Singers(props) {
   } = useSelector(selectSingerProps);
   const dispatch = useDispatch();
   const history = useHistory();
+  const playing = useSelector(selectPlayingSongsCount);
 
   useEffect(() => {
     if (!singerList.length) {
@@ -156,7 +158,7 @@ function Singers(props) {
           oldVal={alpha}
         />
       </NavContainer>
-      <ListContainer>
+      <ListContainer playing={playing}>
         <Scroll
           pullDown={pullDownRefresh}
           pullUp={pullUpNextPage}

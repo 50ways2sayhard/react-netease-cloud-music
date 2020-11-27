@@ -6,6 +6,7 @@ import RecommendList from "../../components/list";
 import Loading from "../../components/loading";
 import Scroll from "../../components/scroll";
 import Slider from "../../components/slider";
+import { selectPlayingSongsCount } from "../Player/store/selectors";
 import * as actionTypes from "./store/actionCreators";
 import {
     selectBannerList,
@@ -18,6 +19,7 @@ function Recommend(props) {
   const bannerList = useSelector(selectBannerList);
   const recommendList = useSelector(selectRecommendList);
   const loading = useSelector(selectLoadingStatus);
+  const playing = useSelector(selectPlayingSongsCount);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -26,7 +28,7 @@ function Recommend(props) {
   }, [dispatch]);
 
   return (
-    <Content>
+    <Content playing={playing}>
       <Scroll className="list" onScroll={forceCheck}>
         <div>
           <Slider bannerList={bannerList} />

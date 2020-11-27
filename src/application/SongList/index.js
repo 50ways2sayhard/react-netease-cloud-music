@@ -1,15 +1,30 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { getCount } from "../../api/utils";
+import { useDispatch } from "react-redux";
+import { getCount, getName } from "../../api/utils";
+import {
+    changeCurrentIndex,
+    changePlayList,
+    changeSequencePlayList
+} from "../Player/store/actionCreators";
 import { SongItem, SongList } from "./style";
-import { getName } from "./utils";
 
 const SongsList = React.forwardRef((props, refs) => {
   const { tracks, subscribedCount, showBackground, showCollect } = props;
+  const { musicAnimation } = props;
+  const dispatch = useDispatch();
+
+  const selectItem = (e, index) => {
+    dispatch(changePlayList(tracks));
+    dispatch(changeSequencePlayList(tracks));
+    dispatch(changeCurrentIndex(index));
+    musicAnimation(e.nativeEvent.clientX, e.nativeEvent.clientY);
+  };
+
   return (
     <SongList ref={refs} showBackground={showBackground}>
       <div className="first_line">
-        <div className="play_all">
+        <div className="play_all" onClick={(e) => selectItem(e, 0)}>
           <i className="iconfont">&#xe6e3;</i>
           <span>
             {" "}
@@ -25,7 +40,7 @@ const SongsList = React.forwardRef((props, refs) => {
       </div>
       <SongItem>
         {tracks.map((item, index) => (
-          <li key={index}>
+          <li key={index} onClick={(e) => selectItem(e, index)}>
             <span className="index">{index + 1}</span>
             <div className="info">
               <span>{item.name}</span>
@@ -45,6 +60,7 @@ SongsList.defaultProps = {
   tracks: [],
   subscribedCount: 0,
   showCollect: true,
+  musicAnimation: () => {},
 };
 
 SongsList.propTypes = {
@@ -52,6 +68,7 @@ SongsList.propTypes = {
   subscribedCount: PropTypes.number,
   showBackground: PropTypes.bool,
   showCollect: PropTypes.bool,
+  musicAnimation: PropTypes.func,
 };
 
 export default React.memo(SongsList);

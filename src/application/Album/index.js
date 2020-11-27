@@ -6,7 +6,9 @@ import { isEmptyObject } from "../../api/utils";
 import style from "../../assets/global-style";
 import Header from "../../components/header";
 import Loading from "../../components/loading";
+import MusicNote from "../../components/music-note";
 import Scroll from "../../components/scroll";
+import { selectPlayingSongsCount } from "../Player/store/selectors";
 import SongsList from "../SongList";
 import Cover from "./Cover";
 import { changeEnterLoading, getAlbumList } from "./store/actionCreators";
@@ -19,10 +21,12 @@ function Album(props) {
   const [showStatus, setShowStatus] = useState(true);
   const container = useRef();
   const headerEl = useRef();
+  const musicNoteRef = useRef();
   const albumId = props.match.params.id;
 
   // redux
   const { currentAlbum, enterLoading } = useSelector(selectAlbumState);
+  const playing = useSelector(selectPlayingSongsCount);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -55,6 +59,10 @@ function Album(props) {
     [currentAlbum]
   );
 
+  const musicAnimation = (x, y) => {
+    musicNoteRef.current.startAnimation({ x, y });
+  };
+
   return (
     <CSSTransition
       nodeRef={container}
@@ -65,7 +73,7 @@ function Album(props) {
       unmountOnExit
       onExited={props.history.goBack}
     >
-      <Container ref={container}>
+      <Container ref={container} playing={playing}>
         <Header
           ref={headerEl}
           title={title}
@@ -79,6 +87,9 @@ function Album(props) {
               <SongsList
                 tracks={currentAlbum.tracks}
                 subscribedCount={currentAlbum.subscribedCount}
+                showBackground={true}
+                showCollect={true}
+                musicAnimation={musicAnimation}
               />
             ) : (
               ""
@@ -86,6 +97,7 @@ function Album(props) {
           </div>
         </Scroll>
         <Loading show={enterLoading} />
+        <MusicNote ref={musicNoteRef} />
       </Container>
     </CSSTransition>
   );

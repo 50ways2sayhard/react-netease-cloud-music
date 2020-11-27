@@ -4,7 +4,9 @@ import { CSSTransition } from "react-transition-group";
 import { HEADER_HEIGHT } from "../../api/config";
 import Header from "../../components/header";
 import Loading from "../../components/loading";
+import MusicNote from "../../components/music-note";
 import Scroll from "../../components/scroll";
+import { selectPlayingSongsCount } from "../Player/store/selectors";
 import SongsList from "../SongList";
 import { changeLoading, getSingerInfo } from "./store/actionCreators";
 import { selectSingerInfo } from "./store/selectors";
@@ -26,10 +28,12 @@ function Singer(props) {
   const songScroll = useRef();
   const layer = useRef();
   const header = useRef();
+  const musicNoteRef = useRef();
 
   const initialHeight = useRef(0);
 
   const { artist, songsOfArtist, loading } = useSelector(selectSingerInfo);
+  const playing = useSelector(selectPlayingSongsCount);
   const dispatch = useDispatch();
 
   const OFFSET = 5;
@@ -88,6 +92,10 @@ function Singer(props) {
     setShowStatus(false);
   }, []);
 
+  const musicAnimation = (x, y) => {
+    musicNoteRef.current.startAnimation({ x, y });
+  };
+
   return (
     <CSSTransition
       nodeRef={container}
@@ -98,7 +106,7 @@ function Singer(props) {
       unmountOnExit
       onExited={() => props.history.goBack()}
     >
-      <Container ref={container}>
+      <Container ref={container} playing={playing}>
         <Header ref={header} title={artist.name} handleClick={handleClick} />
         <ImgWrapper bgUrl={artist.picUrl} ref={imageWrapper}>
           <div className="filter" />
@@ -108,12 +116,17 @@ function Singer(props) {
           <span className="text"> 收藏 </span>
         </CollectButton>
         <BgLayer ref={layer} />
-        <SongListWrapper ref={songScrollWrapper}>
+        <SongListWrapper ref={songScrollWrapper} playing={playing}>
           <Scroll ref={songScroll} onScroll={handleScroll}>
-            <SongsList tracks={songsOfArtist} showCollect={false} />
+            <SongsList
+              tracks={songsOfArtist}
+              showCollect={false}
+              musicAnimation={musicAnimation}
+            />
           </Scroll>
         </SongListWrapper>
         <Loading show={loading} />
+        <MusicNote ref={musicNoteRef} />
       </Container>
     </CSSTransition>
   );

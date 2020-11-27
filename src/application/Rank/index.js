@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { renderRoutes } from "react-router-config";
 import Loading from "../../components/loading";
 import Scroll from "../../components/scroll";
+import { selectPlayingSongsCount } from "../Player/store/selectors";
 import { EnterLoading } from "../Singers/style";
 import RankList from "./RankList";
 import { getRankList } from "./store/actionCreators";
@@ -13,6 +14,7 @@ import { filterOfficialAndGlobalRankList } from "./utils";
 function Rank(props) {
   const { rankList, loading } = useSelector(selectRankState);
   const dispatch = useDispatch();
+  const playing = useSelector(selectPlayingSongsCount);
 
   const fetchRankList = useCallback(() => {
     dispatch(getRankList());
@@ -26,7 +28,7 @@ function Rank(props) {
   let displayStyle = loading ? { display: "none" } : { display: "block" };
 
   return (
-    <Container>
+    <Container playing={playing}>
       <Scroll>
         <div>
           <h1 className="official" style={displayStyle}>

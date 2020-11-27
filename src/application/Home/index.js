@@ -1,6 +1,7 @@
 import React from "react";
 import { renderRoutes } from "react-router-config";
 import { NavLink } from "react-router-dom";
+import Player from "../Player";
 import { Tab, TabItem, Top } from "./style";
 
 function Home(props) {
@@ -30,6 +31,7 @@ function Home(props) {
         </NavLink>
       </Tab>
       {renderRoutes(route.routes)}
+      <Player />
     </div>
   );
 }
