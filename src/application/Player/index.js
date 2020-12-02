@@ -5,13 +5,15 @@ import { getSongUrl, isEmptyObject } from "../../api/utils";
 import Toast from "../../components/toast";
 import MiniPlayer from "./miniPlayer";
 import NormalPlayer from "./normalPlayer";
+import PlayList from "./play-list";
 import {
     changeCurrentIndex,
     changeCurrentSong,
     changeFullScreen,
     changePlayingState,
     changePlayMode,
-    changeSequencePlayList
+    changeSequencePlayList,
+    changeShowPlaylist
 } from "./store/actionCreators";
 import { selectPlayerState } from "./store/selectors";
 import { findIndex, shuffle } from "./utils";
@@ -152,6 +154,13 @@ function Player(props) {
     alert("播放出错");
   };
 
+  const togglePlayList = useCallback(
+    (data) => {
+      dispatch(changeShowPlaylist(data));
+    },
+    [dispatch]
+  );
+
   return (
     <div>
       {!isEmptyObject(currentSong) ? (
@@ -162,6 +171,7 @@ function Player(props) {
           fullScreen={fullScreen}
           toggleFullScreen={toggleFullScreen}
           clickPlaying={clickPlaying}
+          togglePlayList={togglePlayList}
         />
       ) : null}
       {!isEmptyObject(currentSong) ? (
@@ -187,6 +197,7 @@ function Player(props) {
         onEnded={handleEnd}
         onError={handleError}
       />
+      <PlayList />
       <Toast text={modeText} ref={toastRef} />
     </div>
   );

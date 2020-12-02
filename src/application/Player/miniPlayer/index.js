@@ -7,8 +7,14 @@ import { MiniPlayerContainer } from "./style";
 
 function MiniPlayer(props) {
   const { song, fullScreen, toggleFullScreen, playing, percent } = props;
-  const { clickPlaying, setFullScreen } = props;
+  const { clickPlaying, setFullScreen, togglePlayList } = props;
   const playerRef = useRef();
+
+  const handleTogglePlayList = (e) => {
+    e.stopPropagation();
+    togglePlayList(true);
+  };
+
   return (
     <CSSTransition
       nodeRef={playerRef}
@@ -60,7 +66,7 @@ function MiniPlayer(props) {
             )}
           </ProgressCircle>
         </div>
-        <div className="control">
+        <div className="control" onClick={handleTogglePlayList}>
           <i className="iconfont">&#xe640;</i>
         </div>
       </MiniPlayerContainer>
@@ -76,6 +82,7 @@ MiniPlayer.propTypes = {
   toggleFullScreen: PropTypes.func,
   clickPlaying: PropTypes.func,
   setFullScreen: PropTypes.func,
+  togglePlayList: PropTypes.func,
 };
 
 MiniPlayer.defaultProps = {
@@ -85,6 +92,7 @@ MiniPlayer.defaultProps = {
   toggleFullScreen: () => {},
   clickPlaying: () => {},
   setFullScreen: () => {},
+  togglePlayList: () => {},
 };
 
 export default React.memo(MiniPlayer);

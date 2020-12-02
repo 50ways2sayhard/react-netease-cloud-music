@@ -32,6 +32,7 @@ function NormalPlayer(props) {
     handleNext,
     handlePrev,
     changeMode,
+    togglePlayList,
   } = props;
   const playerRef = useRef();
   const cdWrapperRef = useRef();
@@ -166,7 +167,11 @@ function NormalPlayer(props) {
                 }}
               />
             </div>
-            <div className="icon i-right" onClick={handleNext}>
+            <div
+              className="icon i-right"
+              onClick={handleNext}
+              onClick={togglePlayList}
+            >
               <i className="iconfont">&#xe718;</i>
             </div>
             <div className="icon i-right">
@@ -192,6 +197,7 @@ NormalPlayer.defaultProps = {
   handleNext: () => {},
   handlePrev: () => {},
   changeMode: () => {},
+  togglePlayList: () => {},
 };
 
 NormalPlayer.propTypes = {
@@ -209,6 +215,7 @@ NormalPlayer.propTypes = {
   handleNext: PropTypes.func,
   handlePrev: PropTypes.func,
   changeMode: PropTypes.func,
+  togglePlayList: PropTypes.func,
 };
 
 export default React.memo(NormalPlayer);
