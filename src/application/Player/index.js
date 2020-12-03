@@ -7,13 +7,13 @@ import MiniPlayer from "./miniPlayer";
 import NormalPlayer from "./normalPlayer";
 import PlayList from "./play-list";
 import {
-    changeCurrentIndex,
-    changeCurrentSong,
-    changeFullScreen,
-    changePlayingState,
-    changePlayMode,
-    changeSequencePlayList,
-    changeShowPlaylist
+  changeCurrentIndex,
+  changeCurrentSong,
+  changeFullScreen,
+  changePlayingState,
+  changePlayMode,
+  changeSequencePlayList,
+  changeShowPlaylist,
 } from "./store/actionCreators";
 import { selectPlayerState } from "./store/selectors";
 import { findIndex, shuffle } from "./utils";
@@ -67,9 +67,12 @@ function Player(props) {
 
   const percent = isNaN(currentTime / duration) ? 0 : currentTime / duration;
 
-  const toggleFullScreen = useCallback((data) => {
-    dispatch(changeFullScreen(data));
-  });
+  const toggleFullScreen = useCallback(
+    (data) => {
+      dispatch(changeFullScreen(data));
+    },
+    [dispatch]
+  );
 
   const clickPlaying = useCallback(
     (e, state) => {
@@ -93,7 +96,7 @@ function Player(props) {
       audioRef.current.currentTime = newTime;
       if (!playing) dispatch(changePlayingState(true));
     },
-    [setCurrentTime, dispatch]
+    [setCurrentTime, dispatch, duration, playing]
   );
 
   const handleLoop = useCallback(() => {
@@ -111,7 +114,7 @@ function Player(props) {
     if (index < 0) index = playList.length - 1;
     if (!playing) dispatch(changePlayingState(true));
     dispatch(changeCurrentIndex(index));
-  }, [dispatch, currentIndex]);
+  }, [dispatch, currentIndex, playing, playList.length]);
 
   const handleNext = useCallback(() => {
     if (playList.length === 1) {
@@ -119,14 +122,15 @@ function Player(props) {
       return;
     }
     let index = (currentIndex + 1) % playList.length;
+    console.log(index);
     if (!playing) dispatch(changePlayingState(true));
     dispatch(changeCurrentIndex(index));
-  }, [dispatch, currentIndex]);
+  }, [dispatch, currentIndex, playList.length, playing]);
 
   const handleEnd = useCallback(() => {
     if (mode === playMode.loop) handleLoop();
     else handleNext();
-  }, [mode]);
+  }, [mode, handleLoop, handleNext]);
 
   const changeMode = useCallback(() => {
     const newMode = (mode + 1) % 3;
@@ -189,6 +193,7 @@ function Player(props) {
           handlePrev={handlePrev}
           handleNext={handleNext}
           changeMode={changeMode}
+          togglePlayList={togglePlayList}
         />
       ) : null}
       <audio
@@ -197,7 +202,7 @@ function Player(props) {
         onEnded={handleEnd}
         onError={handleError}
       />
-      <PlayList />
+      <PlayList changeMode={changeMode} />
       <Toast text={modeText} ref={toastRef} />
     </div>
   );

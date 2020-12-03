@@ -1,5 +1,6 @@
 import produce from "immer";
 import { playMode } from "../../../api/config";
+import { findIndex } from "../utils";
 import * as actionTypes from "./constants";
 
 const defaultState = {
@@ -38,6 +39,20 @@ export default produce((draft, action) => {
       break;
     case actionTypes.SET_PLAY_MODE:
       draft.mode = action.data;
+      break;
+    case actionTypes.DELETE_SONG:
+      const playList = draft.playList.filter(
+        (item) => item.id !== action.data.id
+      );
+      const sequencePlayList = draft.sequencePlayList.filter(
+        (item) => item.id !== action.data.id
+      );
+      const newIdx = findIndex(draft.currentSong, sequencePlayList);
+      draft.currentIndex = newIdx === -1 ? draft.currentIndex - 1 : newIdx;
+      draft.playList = playList;
+      draft.sequencePlayList = sequencePlayList;
+      break;
+    default:
       break;
   }
 }, defaultState);

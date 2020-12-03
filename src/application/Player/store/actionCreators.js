@@ -39,3 +39,8 @@ export const changeCurrentIndex = (data) => ({
   type: actionTypes.SET_CURRENT_INDEX,
   data,
 });
+
+export const deleteSong = (data) => ({
+  type: actionTypes.DELETE_SONG,
+  data,
+});

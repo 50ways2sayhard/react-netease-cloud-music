@@ -6,13 +6,13 @@ import { playMode } from "../../../api/config";
 import { formatPlayTime, getName, prefixStyle } from "../../../api/utils";
 import ProgressBar from "../../../components/progress-bar";
 import {
-    Bottom,
-    CDWrapper,
-    Middle,
-    NormalPlayerContainer,
-    Operators,
-    ProgressWrapper,
-    Top
+  Bottom,
+  CDWrapper,
+  Middle,
+  NormalPlayerContainer,
+  Operators,
+  ProgressWrapper,
+  Top,
 } from "./style";
 
 function NormalPlayer(props) {
@@ -167,14 +167,10 @@ function NormalPlayer(props) {
                 }}
               />
             </div>
-            <div
-              className="icon i-right"
-              onClick={handleNext}
-              onClick={togglePlayList}
-            >
+            <div className="icon i-right" onClick={handleNext}>
               <i className="iconfont">&#xe718;</i>
             </div>
-            <div className="icon i-right">
+            <div className="icon i-right" onClick={() => togglePlayList(true)}>
               <i className="iconfont">&#xe640;</i>
             </div>
           </Operators>
