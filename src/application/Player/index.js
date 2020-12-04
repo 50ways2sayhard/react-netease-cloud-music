@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { playMode } from "../../api/config";
+import { getLyricRequest } from "../../api/request";
 import { getSongUrl, isEmptyObject } from "../../api/utils";
 import Toast from "../../components/toast";
 import MiniPlayer from "./miniPlayer";
@@ -28,6 +29,8 @@ function Player(props) {
   const songReady = useRef();
   const toastRef = useRef();
 
+  const currentLyric = useRef();
+
   const {
     fullScreen,
     playing,
@@ -38,6 +41,22 @@ function Player(props) {
     sequencePlayList,
   } = useSelector(selectPlayerState);
   const dispatch = useDispatch();
+
+  const getLyric = (id) => {
+    let lyric = "";
+    getLyricRequest(id)
+      .then((data) => {
+        lyric = data.lrc.lyric;
+        if (!lyric) {
+          currentLyric.current = null;
+          return;
+        }
+      })
+      .catch(() => {
+        songReady.current = true;
+        audioRef.current.play();
+      });
+  };
 
   useEffect(() => {
     if (
@@ -57,6 +76,7 @@ function Player(props) {
       });
     });
     dispatch(changePlayingState(true));
+    getLyric(current.id);
     setCurrentTime(0);
     setDuration((current.dt / 1000) | 0);
   }, [dispatch, currentIndex, preSong.id]);
@@ -122,7 +142,6 @@ function Player(props) {
       return;
     }
     let index = (currentIndex + 1) % playList.length;
-    console.log(index);
     if (!playing) dispatch(changePlayingState(true));
     dispatch(changeCurrentIndex(index));
   }, [dispatch, currentIndex, playList.length, playing]);

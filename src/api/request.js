@@ -43,3 +43,7 @@ export const getAlbumDetailRequest = (id) => {
 export const getSingerInfoRequest = (id) => {
   return axios.get("/artists", { params: { id } });
 };
+
+export const getLyricRequest = (id) => {
+  return axios.get("/lyric", { params: { id } });
+};
