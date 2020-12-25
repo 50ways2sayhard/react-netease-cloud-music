@@ -1,6 +1,8 @@
+import userEvent from "@testing-library/user-event";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { playMode } from "../../api/config";
+import Lyric from "../../api/lyric-parser";
 import { getLyricRequest } from "../../api/request";
 import { getSongUrl, isEmptyObject } from "../../api/utils";
 import Toast from "../../components/toast";
@@ -24,12 +26,14 @@ function Player(props) {
   const [duration, setDuration] = useState(0);
   const [preSong, setPrevSong] = useState({});
   const [modeText, setModeText] = useState("");
+  const [currentPlayingLyric, setCurrentPlayingLyric] = useState("");
 
   const audioRef = useRef();
   const songReady = useRef();
   const toastRef = useRef();
 
   const currentLyric = useRef();
+  const currentLineNum = useRef(null);
 
   const {
     fullScreen,
@@ -42,6 +46,12 @@ function Player(props) {
   } = useSelector(selectPlayerState);
   const dispatch = useDispatch();
 
+  const handleLyric = ({ lineNum, txt }) => {
+    if (!currentLyric.current) return;
+    currentLineNum.current = lineNum;
+    setCurrentPlayingLyric(txt);
+  };
+
   const getLyric = (id) => {
     let lyric = "";
     getLyricRequest(id)
@@ -51,6 +61,10 @@ function Player(props) {
           currentLyric.current = null;
           return;
         }
+        currentLineNum.current = 0;
+        currentLyric.current = new Lyric(lyric, handleLyric);
+        currentLyric.current.play();
+        currentLyric.current.seek(0);
       })
       .catch(() => {
         songReady.current = true;
@@ -97,9 +111,11 @@ function Player(props) {
   const clickPlaying = useCallback(
     (e, state) => {
       e.stopPropagation();
+      if (currentLyric.current)
+        currentLyric.current.togglePlay(currentTime * 1000);
       dispatch(changePlayingState(state));
     },
-    [dispatch]
+    [dispatch, currentTime]
   );
 
   const updateTime = useCallback(
@@ -115,6 +131,7 @@ function Player(props) {
       setCurrentTime(newTime);
       audioRef.current.currentTime = newTime;
       if (!playing) dispatch(changePlayingState(true));
+      if (currentLyric.current) currentLyric.current.seek(newTime * 1000);
     },
     [setCurrentTime, dispatch, duration, playing]
   );
@@ -207,6 +224,9 @@ function Player(props) {
           duration={duration}
           percent={percent}
           mode={mode}
+          currentLyric={currentLyric.current}
+          currentPlayingLyric={currentPlayingLyric}
+          currentLineNum={currentLineNum.current}
           toggleFullScreen={toggleFullScreen}
           onProgressChange={onProgressChange}
           handlePrev={handlePrev}

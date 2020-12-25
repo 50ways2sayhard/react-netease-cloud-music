@@ -44,6 +44,10 @@ export default class Lyric {
     else this.play();
   }
 
+  seek(offset) {
+    this.play(offset, true);
+  }
+
   _initLines() {
     const lines = this.lrc.split("\n");
     lines.forEach((line, idx) => {
